@@ -14,11 +14,11 @@ public class Lifeform extends Rectangle {
         super();
         this.row = i;
         this.col = j;
-        this.setWidth(10);
-        this.setHeight(10);
-        this.setX(10);
-        this.setY(10);
-        if (r.nextInt(10) == 0) { // One in 10 chance of living
+        this.setWidth(5);
+        this.setHeight(5);
+        this.setX(5);
+        this.setY(5);
+        if (r.nextInt(7) == 0) { // One in 7 chance of living
             this.reproduce();
         } else {
             this.kill();

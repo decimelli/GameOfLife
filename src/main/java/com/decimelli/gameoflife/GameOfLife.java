@@ -3,7 +3,6 @@ package com.decimelli.gameoflife;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
@@ -12,18 +11,17 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
-public class HelloApplication extends Application {
+public class GameOfLife extends Application {
 
-    private static final int SIZE = 32;
+    private static final int SIZE = 128;
 
     private final Lifeform[][] community = new Lifeform[SIZE][SIZE];
     private final GridPane grid = new GridPane();
     private final Duration d = Duration.seconds(0.1);
 
-    public HelloApplication() {
+    public GameOfLife() {
         super();
         Random r = new Random();
         for (int i = 0; i < SIZE; i++) {
@@ -38,10 +36,10 @@ public class HelloApplication extends Application {
     public void start(Stage stage) {
         VBox root = new VBox(grid);
         root.setAlignment(Pos.CENTER);
-        Timeline timeline = new Timeline(new KeyFrame(d, (ActionEvent event) -> this.evolve()));
+        Timeline timeline = new Timeline(new KeyFrame(d, event -> evolve()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
-        Scene scene = new Scene(root, SIZE * 10, SIZE * 10);
+        Scene scene = new Scene(root, SIZE * 5.0, SIZE * 5.0);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
@@ -62,7 +60,7 @@ public class HelloApplication extends Application {
     private static class NaturalSelection {
 
         public static void decideFate(Lifeform[][] community, Lifeform lifeform) {
-            long aliveNeighbourCount = 0;
+            Set<Lifeform> neighbours = new HashSet<>();
             for (int i = lifeform.getRow() - 1; i < lifeform.getRow() + 2; i++) {
                 for (int j = lifeform.getCol() - 1; j < lifeform.getCol() + 2; j++) {
                     if ((i == lifeform.getRow() && j == lifeform.getCol()) // Skip itself
@@ -72,9 +70,10 @@ public class HelloApplication extends Application {
                             || j >= SIZE) { // skip top bounds
                         continue; // Skip boundaries
                     }
-                    aliveNeighbourCount++;
+                    neighbours.add(community[i][j]);
                 }
             }
+            long aliveNeighbourCount = neighbours.stream().filter(Lifeform::isAlive).count();
             if (lifeform.isAlive() && aliveNeighbourCount < 2) {
                 lifeform.kill();
             } else if (lifeform.isAlive() && aliveNeighbourCount > 3) {
