@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class GameOfLife extends Application {
