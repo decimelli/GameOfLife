@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class HelloApplication extends Application {
 
-    private static final int SIZE = 64;
+    private static final int SIZE = 32;
 
     private final Lifeform[][] community = new Lifeform[SIZE][SIZE];
     private final GridPane grid = new GridPane();
@@ -41,7 +41,7 @@ public class HelloApplication extends Application {
         Timeline timeline = new Timeline(new KeyFrame(d, (ActionEvent event) -> this.evolve()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
-        Scene scene = new Scene(root, 640, 640);
+        Scene scene = new Scene(root, SIZE * 10, SIZE * 10);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
@@ -62,7 +62,7 @@ public class HelloApplication extends Application {
     private static class NaturalSelection {
 
         public static void decideFate(Lifeform[][] community, Lifeform lifeform) {
-            Set<Lifeform> neighbours = new HashSet<>();
+            long aliveNeighbourCount = 0;
             for (int i = lifeform.getRow() - 1; i < lifeform.getRow() + 2; i++) {
                 for (int j = lifeform.getCol() - 1; j < lifeform.getCol() + 2; j++) {
                     if ((i == lifeform.getRow() && j == lifeform.getCol()) // Skip itself
@@ -72,15 +72,14 @@ public class HelloApplication extends Application {
                             || j >= SIZE) { // skip top bounds
                         continue; // Skip boundaries
                     }
-                    neighbours.add(community[i][j]);
+                    aliveNeighbourCount++;
                 }
             }
-            long aliveNeightbourCount = neighbours.stream().filter(Lifeform::isAlive).count();
-            if (lifeform.isAlive() && aliveNeightbourCount < 2) {
+            if (lifeform.isAlive() && aliveNeighbourCount < 2) {
                 lifeform.kill();
-            } else if (lifeform.isAlive() && aliveNeightbourCount > 3) {
+            } else if (lifeform.isAlive() && aliveNeighbourCount > 3) {
                 lifeform.kill();
-            } else if (!lifeform.isAlive() && aliveNeightbourCount == 3) {
+            } else if (!lifeform.isAlive() && aliveNeighbourCount == 3) {
                 lifeform.reproduce();
             }
         }
